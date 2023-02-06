@@ -36,6 +36,7 @@ class Minesweeper(commands.Cog):
         
     @new_game.error
     async def new_game_error(self, ctx, error):
+        # Error handler for the new_game command. Used to alert on specific errors, otherwise just an alert for coder to check logs
         if isinstance(error, commands.RangeError):
             return await ctx.send("Board width and height must be between 3 and 15, and number of bombs must be at least one, up to 1/3 of the board size. Please try again.")
         elif isinstance(error, commands.BadArgument):
@@ -49,6 +50,7 @@ class Board:
         self._width = width
         self._height = height
         self._bombs = bombs
+        # Dictionary emoji lookup
         self._icons = {
             0: "||:zero:||",
             1: "||:one:||",
@@ -61,6 +63,7 @@ class Board:
             8: "||:eight:||",
             "bomb": "||:boom:||"
         }
+        # Creates game board width wide and height high
         self.board = [[0 for x in range(self._width)] for y in range(self._height)]
         for i in range(self._bombs):
             self._place_bomb()        
@@ -69,19 +72,24 @@ class Board:
         column = random.randint(0, self._width - 1)
         row = random.randint(0, self._height - 1)
         if self.board[row][column] == "bomb":
+            # If there is already a bomb in this spot, pick a different spot
             self._place_bomb()
         else:
             self.board[row][column] = "bomb"
             for x in [row - 1, row, row + 1]:
+                # Stay within row boundary
                 if x > self._height - 1 or x < 0:
                     continue
                 for y in [column - 1, column, column + 1]:
+                    # Stay within column boundary, ignore if there is a bomb
                     if y > self._width - 1 or y < 0 or self.board[x][y] == "bomb":
                         continue
                     else:
+                        # Increment value at this coordinate
                         self.board[x][y] += 1
 
     def get_board(self):
+        # Turns the 2D array into a string formatted with Discord emoji codes and spoiler tags
         rows = []
         for row in self.board:
             formatted = [self._icons[cell] for cell in row]
