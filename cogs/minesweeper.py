@@ -42,7 +42,7 @@ class Minesweeper(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("Please enter a valid number for width, height, and number of bombs.")
         else:
-            await ctx.send(f"`ERROR`\n{error}")
+            await ctx.send(f"`ERROR` - we encountered an unknown error. Sorry about that.")
             raise error
 
 class Board:
